@@ -75,4 +75,44 @@ function filterTable() {
     }
 }
 
+function toggleFilterVisible() {
+    filterDiv = document.getElementById("filters");
+    if (filterDiv.style.display === "none") {
+        filterDiv.style.display = "block";
+    } else {
+        filterDiv.style.display = "none";
+    }
+}
+
+function getModelsPerFilter(){
+    // Find each label with a type=count and value property
+    const labels = document.querySelectorAll('label');
+
+    for (let i = 0; i < labels.length; i++) {
+        // See if the label has a type=count and value property
+        if (labels[i].getAttribute('type') === 'count' && labels[i].getAttribute('value')) {
+            // Get the value of the label
+            const value = labels[i].getAttribute('value');
+
+            // Count the rows that have the value in the tags column
+            let table = document.getElementById("figuresTable");
+            let tbody = table.getElementsByTagName("tbody")[0];
+            let tr = tbody.getElementsByTagName("tr");
+
+            let count = 0;
+            for (let j = 0; j < tr.length; j++) {
+                const tds = tr[j].getElementsByTagName("td");
+                const txtValue = tds[4].textContent || tds[4].innerText;
+                if (txtValue.includes(value)) {
+                    count++;
+                }
+            }
+
+            // Set the count in the label
+            labels[i].textContent = `Total ${value} Models: ${count}`;
+        }
+    }
+}
+
+getModelsPerFilter();
 filterTable();
