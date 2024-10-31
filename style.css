@@ -84,3 +84,7 @@ input[type="checkbox"] {
 .blurred-image {
     filter: blur(20px);
 }
+
+.hidden {
+    display: none;
+}

@@ -4,6 +4,7 @@ import argparse
 import base64
 import os
 from io import BytesIO
+from pickletools import optimize
 
 from PIL import Image
 
@@ -54,7 +55,7 @@ def get_image_base64_data(file, max_height=200):
         resized_img = resized_img.convert('RGB')
 
         buffered = BytesIO()
-        resized_img.save(buffered, format="JPEG")
+        resized_img.save(buffered, format="JPEG", quality=60, optimize=True)
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
     return img_str
 
@@ -100,19 +101,30 @@ def write_filters(f, all_tags):
                     f'</div>')
 
 # Write the table to the html file
-def write_table(f, models):
+def write_table(f, models, custom_tags):
     table = read_file('htmlTableTemplate.html')
     f.write(table)
 
     # Write the table rows to the html file
     for model in models:
+        # Check if the model has any of the custom tags in the model name
+        if custom_tags:
+            for tag in custom_tags:
+                if tag.lower() in model['model_name'].lower():
+                    # If the model tags don't contain the custom tag, add it to the model tags
+                    if tag not in model['tags']:
+                        if model['tags'] == '':
+                            model['tags'] += tag
+                        else:
+                            model['tags'] += ', ' + tag
+
         f.write(f'<tr>'
                 f'<td>{model["character_name"]}</td>'
                 f'<td>{model["model_name"]}</td>'
                 f'<td>{model["series_name"]}</td>'
                 f'<td>{model["category"]}</td>'
                 f'<td>{model["tags"]}</td>'
-                f'<td><img src="data:image/jpeg;base64,{model["image_base64_data"]}" /></td>'
+                f'<td><img loading="lazy" src="data:image/jpeg;base64,{model["image_base64_data"]}" /></td>'
                 f'</tr>')
 
 # Write the closing tags to the html file
@@ -270,6 +282,7 @@ def main():
         # Add a flag for using model-info.txt
         parser.add_argument('path', type=str, help="Path to the root models directory")
         parser.add_argument('--use-model-info', action='store_true', help="Use model-info.txt file")
+        parser.add_argument('--custom-tags', type=str, help="Comma separated list of custom tags")
 
         # Parse the arguments
         args = parser.parse_args()
@@ -279,6 +292,13 @@ def main():
         if not os.path.isdir(path):
             print('Invalid path')
             return
+
+        # Parse the custom tags
+        if args.custom_tags:
+            custom_tags = args.custom_tags.split(',')
+        else:
+            custom_tags = []
+
 
         # Create an html file to write the output to
         # Embed the CSS data in the html file
@@ -301,10 +321,17 @@ def main():
             write_header(f)
 
             # Write the filters to the html file
+
+            # If custom tags are provided, include them in the filters
+            if custom_tags:
+                for tag in custom_tags:
+                    if tag not in all_tags:
+                        all_tags.append(tag)
+
             write_filters(f, all_tags)
 
             # Write the table to the html file
-            write_table(f, models)
+            write_table(f, models, custom_tags)
 
             # Write the closing tags to the html file
             write_close(f)

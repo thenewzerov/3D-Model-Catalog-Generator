@@ -1,8 +1,12 @@
+const debouncedFilter = debounce(filterTable, 300);
+
 function filterTable() {
     let globalInput = document.getElementById("globalFilter").value.toUpperCase();
 
     let excludes = [];
     let onlys = [];
+    let visibles = [];
+    let hiddens = [];
 
     // Get all the radio buttons
     const filters = document.querySelectorAll('input[type=radio]');
@@ -58,6 +62,21 @@ function filterTable() {
             }
         }
 
+
+        // Check if the tags match the filters
+        for (let j = 0; j < tags.length; j++) {
+            if (!excludes.includes(tags[j])) {
+                if (onlys.length === 0 || (onlys.includes(tags[j]))) {
+                    matchesFilters = true;
+                    break;
+                }
+            }else{
+                break;
+            }
+        }
+
+
+
         // Apply blur effect if column 4 contains NSFW
         let imgCell = tds[5].getElementsByTagName("img")[0];
         if (tds[4].textContent.toUpperCase().includes("NSFW")) {
@@ -68,11 +87,29 @@ function filterTable() {
 
         // Show the row if all conditions are met
         if (textMatch && matchesFilters) {
-            tr[i].style.display = "";
+            visibles.push(tr[i]);
         } else {
-            tr[i].style.display = "none";
+            hiddens.push(tr[i]);
         }
     }
+
+    requestAnimationFrame(() => {
+        visibles.forEach(item => {
+            item.classList.remove("hidden");
+        });
+
+        hiddens.forEach(item => {
+            item.classList.add("hidden");
+        });
+    });
+}
+
+function debounce(func, delay) {
+    let debounceTimer;
+    return function(...args) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(this, args), delay);
+    };
 }
 
 function toggleFilterVisible() {

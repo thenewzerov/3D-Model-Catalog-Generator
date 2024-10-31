@@ -14,7 +14,7 @@
     <div class="filter-container">
         <!-- Single input field for filtering across all columns -->
         <label for="globalFilter">Search</label>
-        <input type="text" id="globalFilter" onkeyup="filterTable()" placeholder="Search all columns">
+        <input type="text" id="globalFilter" onkeyup="debouncedFilter()" placeholder="Search all columns">
 
         <button onclick="toggleFilterVisible()">Show/Hide Filters</button>
         <div class="filters" id="filters">
