@@ -43,6 +43,26 @@ def read_file(file):
 
 # Method to read an image, resize it, and convert it to base64 to embed in the html file
 def get_image_base64_data(file, max_height=200):
+
+    # Check if a file named 'file.resized.jpg' exists
+    # Remove the extension from the file name
+    # Check to make sure there's not more than one '.' in the file name
+    file_parts = file.split('.')
+    if len(file_parts) > 2:
+        file_name = '.'.join(file_parts[:-1])
+    else:
+        file_name = file_parts[0]
+
+    # Add the resized file extension
+    resized_file = file_name + '.resized.jpg'
+
+    if os.path.exists(resized_file):
+        # If it does, return the base64 data from that file
+        # This is to prevent resizing the same image multiple times
+        with open(resized_file, 'rb') as f:
+            img_str = base64.b64encode(f.read()).decode('utf-8')
+        return img_str
+
     with Image.open(file) as img:
         # Resize the image to a max height of 200px
         # Calculate the new size while maintaining aspect ratio
@@ -57,11 +77,15 @@ def get_image_base64_data(file, max_height=200):
         buffered = BytesIO()
         resized_img.save(buffered, format="JPEG", quality=60, optimize=True)
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        # Save the resized image to a file
+        with open(resized_file, 'wb') as f:
+            f.write(buffered.getvalue())
     return img_str
 
 
 # Write the header of the html file
-def write_header(f):
+def write_header(f, total_models):
 
     # Read in all the template files
     css = read_file('style.css')
@@ -69,6 +93,7 @@ def write_header(f):
 
     # Replace the CSS data in the html template
     header = header.replace('{{style}}', css)
+    header = header.replace('{{TotalModels}}', str(total_models))
 
     f.write(header)
 
@@ -181,6 +206,8 @@ def gen_from_directory_structure(path):
                         print("Splitting model tags")
                         model_tags = model_tags.split(' ')
                         for tag in model_tags:
+                            if tag == '2B':
+                                print(root)
                             tags.append(tag)
 
                     # If the character name has a number at the end, remove it and trim the whitespace.
@@ -254,6 +281,8 @@ def gen_from_model_info_file(file_path):
                     # Add the tags to the all_tags list
                     for tag in model_info['Tags']:
                         if tag not in all_tags and tag != '':
+                            if tag == '2':
+                                print(root)
                             all_tags.append(tag)
 
                     # Write the output to the html file
@@ -318,7 +347,7 @@ def main():
             print('Writing to html file...')
 
             # Write the header of the html file
-            write_header(f)
+            write_header(f, total_models)
 
             # Write the filters to the html file
 

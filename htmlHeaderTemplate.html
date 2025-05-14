@@ -8,14 +8,14 @@
     </style>
 </head>
 <body>
-    <h2>Available 3D Models</h2>
+    <div class="header">
+        <h2>{{TotalModels}} Available 3D Models</h2>
 
-    <!-- Filter container -->
-    <div class="filter-container">
-        <!-- Single input field for filtering across all columns -->
-        <label for="globalFilter">Search</label>
-        <input type="text" id="globalFilter" onkeyup="debouncedFilter()" placeholder="Search all columns">
+        <!-- Filter container -->
+        <div class="filter-container">
+            <!-- Single input field for filtering across all columns -->
+            <label for="globalFilter">Search</label>
+            <input type="text" id="globalFilter" onkeyup="debouncedFilter()" placeholder="Search all columns">
 
-        <button onclick="toggleFilterVisible()">Show/Hide Filters</button>
-        <div class="filters" id="filters">
-
+            <button onclick="toggleFilterVisible()">Show/Hide Filters</button>
+            <div class="filters" id="filters">

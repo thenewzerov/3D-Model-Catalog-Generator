@@ -6,7 +6,7 @@ from PIL import Image
 # Valid image extensions
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg', '.webp', '.avif'}
 # List of valid file extensions to check for
-VALID_FILE_EXTENSIONS = {'.stl', '.zip'}
+VALID_FILE_EXTENSIONS = {'.stl', '.zip', '.rar', '.7z', '.gz', '.bz2'}
 
 
 def directory_contains_image_file(folder_path):
