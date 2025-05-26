@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from search_functions import find_directories
+from utils.search_utils import find_directories
 
 
 def rename_dirs(base_dir):
@@ -124,7 +124,7 @@ def rename_dirs(base_dir):
 def main():
     try:
         # Create the argument parser
-        parser = argparse.ArgumentParser(description="Generate Model Info")
+        parser = argparse.ArgumentParser(description="Rename Directories")
 
         # Add a flag for using model-info.txt
         parser.add_argument('path', type=str, help="Path to the root models directory")

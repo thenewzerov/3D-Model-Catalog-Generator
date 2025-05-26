@@ -1,7 +1,7 @@
 import os
 import sys
 
-from search_functions import find_directories
+from utils.search_utils import find_directories
 
 
 def find_invalid_folders(base_path):

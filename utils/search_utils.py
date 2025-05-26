@@ -61,6 +61,9 @@ def contains_stl_folder(folder):
                 return True
             if subfolder.lower() == 'renders':
                 return True
+            return False
+        return False
+    return False
 
 
 def find_directories(base_dir):

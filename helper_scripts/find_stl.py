@@ -1,14 +1,7 @@
-import os
 import argparse
 
-def find_stl_folders(path):
-    stl_folders = []
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            if file.endswith(".stl"):
-                stl_folders.append(root)
-                break  # Stop searching the current folder after finding one STL file
-    return stl_folders
+from utils.file_utils import find_stl_folders
+
 
 def main():
     parser = argparse.ArgumentParser(description="Find folders containing .stl files.")
